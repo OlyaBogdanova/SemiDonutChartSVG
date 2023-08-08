@@ -8,10 +8,16 @@
   </head>
   <body>
     <div id="app">
-      <my-circle fill="transparent" stroke="#b9cad1"  :percentage="percentArray"></my-circle>
-      <input type="text" placeholder="Введите проценты через пробел" v-model="inputPercent" @change="checkInput"/>
-
-      <button @click="addGrafic" :disabled="disabled">Сформировать график</button>
+      <my-circle
+        fill="transparent"
+        stroke="#b9cad1"
+        :percentage="percentArray"
+      ></my-circle>
+      <input
+        type="text"
+        placeholder="Введите проценты через пробел"
+        v-model="inputPercent"
+      />
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14"></script>
 
@@ -21,7 +27,7 @@
           percentage: {
             type: Array,
             required: false,
-            default: () => [20, 30, 20, 20,10],
+            default: () => [20, 30, 20, 20, 10],
           },
           height: {
             type: Number,
@@ -41,12 +47,18 @@
           sectorColors: {
             type: Array,
             required: false,
-            default: () => ["#e589e8", "#adf0e1", "#f0eaad", "#f0ccad", "#f0adc8"],
+            default: () => [
+              "#e589e8",
+              "#adf0e1",
+              "#f0eaad",
+              "#f0ccad",
+              "#f0adc8",
+            ],
           },
           gap: {
             type: Number,
             required: false,
-            default: 0.4,
+            default: 0.1,
           },
         },
         data() {
@@ -149,30 +161,15 @@
 
         data() {
           return {
-      
-            inputPercent:'',
-            disabled:true
+            inputPercent: "",
           };
         },
-        methods:{
-          addGrafic(){
-          
 
+        computed: {
+          percentArray() {
+            return this.inputPercent.trim().split(" ");
           },
-          checkInput(){
-        
-            const percentArray=this.inputPercent.trim().split(' ')
-            if(percentArray.length){
-              this.disabled=false
-            }
-          }
         },
-        computed:{
-        
-          percentArray(){
-            return this.inputPercent.trim().split(' ')
-          }
-        }
       });
     </script>
     <script src="
