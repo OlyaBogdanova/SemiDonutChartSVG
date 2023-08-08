@@ -8,7 +8,10 @@
   </head>
   <body>
     <div id="app">
-      <my-circle fill="transparent" stroke="#b9cad1"></my-circle>
+      <my-circle fill="transparent" stroke="#b9cad1"  :percentage="percentArray"></my-circle>
+      <input type="text" placeholder="Введите проценты через пробел" v-model="inputPercent" @change="checkInput"/>
+
+      <button @click="addGrafic" :disabled="disabled">Сформировать график</button>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14"></script>
 
@@ -146,9 +149,30 @@
 
         data() {
           return {
-            title: "gfgfg",
+      
+            inputPercent:'',
+            disabled:true
           };
         },
+        methods:{
+          addGrafic(){
+          
+
+          },
+          checkInput(){
+        
+            const percentArray=this.inputPercent.trim().split(' ')
+            if(percentArray.length){
+              this.disabled=false
+            }
+          }
+        },
+        computed:{
+        
+          percentArray(){
+            return this.inputPercent.trim().split(' ')
+          }
+        }
       });
     </script>
     <script src="
