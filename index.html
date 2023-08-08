@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">
+      <my-circle fill="transparent" stroke="#b9cad1"></my-circle>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14"></script>
+
+    <script>
+      const myCircle = Vue.component("my-circle", {
+        props: {
+          percentage: {
+            type: Array,
+            required: false,
+            default: () => [20, 30, 20, 20,10],
+          },
+          height: {
+            type: Number,
+            required: false,
+            default: 128,
+          },
+          width: {
+            type: Number,
+            required: false,
+            default: 256,
+          },
+          strokeWidth: {
+            type: Number,
+            required: false,
+            default: 30,
+          },
+          sectorColors: {
+            type: Array,
+            required: false,
+            default: () => ["#e589e8", "#adf0e1", "#f0eaad", "#f0ccad", "#f0adc8"],
+          },
+          gap: {
+            type: Number,
+            required: false,
+            default: 0.4,
+          },
+        },
+        data() {
+          viewbox: "";
+        },
+
+        computed: {
+          cx() {
+            return this.width / 2;
+          },
+          cy() {
+            return this.height / 2;
+          },
+          radius() {
+            return this.width / 2 - this.strokeWidth / 2;
+          },
+
+          C() {
+            return Math.PI * this.radius;
+          },
+          computedGap() {
+            return (this.C * this.gap) / 100;
+          },
+          strokeDashArrays() {
+            const sumGapPercentage =
+              (this.gap * (this.percentage?.length - 1)) / 100;
+            return this.percentage.map((percent) => {
+              return [
+                (this.C * (1 - sumGapPercentage) * percent) / 100,
+                this.C * (1 - (percent / 100) * (1 - sumGapPercentage)),
+              ];
+            });
+          },
+          strokeDashOffsets() {
+            return this.strokeDashArrays.map((value, index) => {
+              return (
+                this.strokeDashArrays
+                  // Берем все элементы до текущего
+                  .slice(0, index)
+                  // Начинаем с C, так как первый элемент должен стоять ровно в начале тоесть на C
+                  .reduce(
+                    (acc, item) =>
+                      index >= 1
+                        ? acc - item[0] - this.computedGap
+                        : acc - item[0],
+                    this.C
+                  )
+              );
+            });
+          },
+          viewbox() {
+            const halfHeight = -this.height / 2;
+            return `0 ${halfHeight} ${this.width} ${this.height}`;
+          },
+        },
+
+        methods: {
+          calculateColor(index) {
+            return this.sectorColors[index];
+          },
+        },
+        template: ` <div>
+    
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      :height="height"
+      :width="width"
+      :viewBox="viewbox"
+    >
+      <circle
+        fill="transparent"
+        stroke="#b9cad1"
+        :cx="cx"
+        :cy="cy"
+        :r="radius"
+        :stroke-dasharray="[C, C].join(', ')"
+        :stroke-dashoffset="C"
+        :stroke-width="strokeWidth"
+      />
+
+      <circle
+        v-for="(item, index) in strokeDashOffsets"
+        :key="index"
+        fill="transparent"
+        :cx="cx"
+        :cy="cy"
+        :r="radius"
+        :stroke="calculateColor(index)"
+        :stroke-dasharray="strokeDashArrays[index].join(', ')"
+        :stroke-dashoffset="item"
+        :stroke-width="strokeWidth"
+      />
+    </svg>
+  </div>`,
+      });
+
+      const myApp = new Vue({
+        el: "#app",
+        components: [myCircle],
+
+        data() {
+          return {
+            title: "gfgfg",
+          };
+        },
+      });
+    </script>
+    <script src="
+       https://cdn.jsdelivr.net/npm/vue-devtools@5.1.4/lib/index.min.js
+       "></script>
+  </body>
+</html>
